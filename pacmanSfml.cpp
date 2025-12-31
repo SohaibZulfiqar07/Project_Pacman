@@ -45,14 +45,14 @@ struct RecordDate {
 struct Entity { 
     Position pos; 
     sf::Color color; 
-    Stats gameplayStats; // Nested Structure Implementation
+    Stats gameplayStats; 
 };
 
 // High Score management structure
 struct HighScoreRecord {
     char playerName[5];
     int score;
-    RecordDate dateAchieved; // Nested Structure Implementation
+    RecordDate dateAchieved;
 };
 
 // Container for the current game session data
@@ -78,7 +78,7 @@ const float OFFSET_X = (WIN_W - (COLS * TILE_SIZE)) / 2.0f;
 enum State { START, PLAYING, GAMEOVER, WIN };
 
 int maze[ROWS][COLS];
-HighScoreRecord highScores[20]; // Array requirement: 20 records
+HighScoreRecord highScores[20]; 
 
 // =============================================================================
 // SECTION 3: FILE HANDLING & SORTING (Requirements: Persistence & Algorithms)
@@ -120,6 +120,10 @@ void updateHighScores(int newScore) {
     if (newScore > highScores[19].score) {
         highScores[19].score = newScore;
         snprintf(highScores[19].playerName, 5, "YOU");
+
+        highScores[19].dateAchieved.day = 31;   
+        highScores[19].dateAchieved.month = 12;
+        highScores[19].dateAchieved.year = 2025;
         
         // Sorting Algorithm: Bubble Sort (Ascending/Descending management)
         for (int i = 0; i < 20 - 1; i++) {
@@ -183,6 +187,7 @@ void drawPixelLetter(sf::RenderWindow& win, char c, float x, float y, float sz, 
     else if (c == 'C') { for(int j=1; j<4; j++) d(0,j); for(int i=1; i<3; i++) { d(i,0); d(i,4); } }
     else if (c == 'M') { for(int j=0; j<5; j++) { d(0,j); d(4,j); } d(1,1); d(2,2); d(3,1); }
     else if (c == 'N') { for(int j=0; j<5; j++) { d(0,j); d(4,j); } d(1,1); d(2,2); d(3,3); }
+    else if (c == 'W') { for(int j=0; j<5; j++) { d(0,j); d(4,j); } d(1,3); d(2,2); d(3,3); } 
     else if (c == 'S') { for(int i=0; i<3; i++) { d(i,0); d(i,2); d(i,4); } d(0,1); d(2,3); }
     else if (c == 'T') { for(int i=0; i<3; i++) d(i,0); for(int j=1; j<5; j++) d(1,j); }
     else if (c == 'R') { for(int j=0; j<5; j++) d(0,j); d(1,0); d(1,2); d(2,1); d(2,3); d(2,4); }
