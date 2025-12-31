@@ -2,7 +2,9 @@
 =============================================================================
 PROGRAMMING FUNDAMENTALS - SEMESTER PROJECT
 Project Title:  Advanced Pacman (SFML Edition)
-Author:         [Your Name Here]
+Authors:         Muhammad Sohaib Zulfiqar-2501303
+                 Muhammad Azeem-2501276
+                 Hasnain Imtiaz-2501381
 Requirements:   Nested Structures, Switch Statements, Arrays, File Handling,
                 Sorting Algorithms, and GUI Implementation (SFML).
 =============================================================================
@@ -15,7 +17,7 @@ Requirements:   Nested Structures, Switch Statements, Arrays, File Handling,
 #include <string>
 #include <optional>
 #include <ctime>
-#include <cstdio> 
+#include <cstdlib> 
 
 using namespace std;
 
