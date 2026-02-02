@@ -705,14 +705,14 @@ int main()
                 game.ghosts[i].pos.c += game.ghostDirs[i].c;
 
                 // Game Over Condition: Collision with Enemy
-                // if (game.ghosts[i].pos.r == game.player.pos.r && game.ghosts[i].pos.c == game.player.pos.c) 
-                // {
-                //     state = GAMEOVER;
-                //     music.stop();
-                //     if (deathSound) 
-                //         deathSound->play();
-                //     updateHighScores(game.player.gameplayStats.score);
-                // }
+                if (game.ghosts[i].pos.r == game.player.pos.r && game.ghosts[i].pos.c == game.player.pos.c) 
+                {
+                    state = GAMEOVER;
+                    music.stop();
+                    if (deathSound) 
+                        deathSound->play();
+                    updateHighScores(game.player.gameplayStats.score);
+                }
             }
         }
 
