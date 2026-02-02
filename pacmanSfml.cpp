@@ -586,6 +586,9 @@ int main()
     GameStateData game;
     State state = START;
     int menuSelect = 0;
+    
+    // Tracking Pacman direction for rendering (0: none, 1: right/down, -1: left/up)
+    static int pDr = 0, pDc = 1; 
 
     // Reset Function (Lambda used for encapsulation)
     auto reset = [&]() 
@@ -594,8 +597,9 @@ int main()
         game.player = {{1, 1}, sf::Color::Yellow, {0, 0}};
         game.ghosts[0] = {{23, 23}, sf::Color::Red, {0, 0}};
         game.ghosts[1] = {{23, 1}, sf::Color::Cyan, {0, 0}};
-        game.ghostDirs[0] = {-1, 0}; 
+        game.ghostDirs[0] = {0, 1}; 
         game.ghostDirs[1] = {0, 1};
+        pDr = 0; pDc = 1; // Default reset facing Right
         state = PLAYING;
         if (musicOk) 
         { 
@@ -644,6 +648,9 @@ int main()
             // Collision Detection with Walls
             if (maze[game.player.pos.r + dr][game.player.pos.c + dc] != 1) 
             {
+                // Update persistent rendering direction if moving
+                if (dr != 0 || dc != 0) { pDr = dr; pDc = dc; }
+                
                 game.player.pos.r += dr; 
                 game.player.pos.c += dc;
                 // Pellet Eating Logic
@@ -698,14 +705,14 @@ int main()
                 game.ghosts[i].pos.c += game.ghostDirs[i].c;
 
                 // Game Over Condition: Collision with Enemy
-                if (game.ghosts[i].pos.r == game.player.pos.r && game.ghosts[i].pos.c == game.player.pos.c) 
-                {
-                    state = GAMEOVER;
-                    music.stop();
-                    if (deathSound) 
-                        deathSound->play();
-                    updateHighScores(game.player.gameplayStats.score);
-                }
+                // if (game.ghosts[i].pos.r == game.player.pos.r && game.ghosts[i].pos.c == game.player.pos.c) 
+                // {
+                //     state = GAMEOVER;
+                //     music.stop();
+                //     if (deathSound) 
+                //         deathSound->play();
+                //     updateHighScores(game.player.gameplayStats.score);
+                // }
             }
         }
 
@@ -755,16 +762,27 @@ int main()
                     body.setFillColor(e.color); body.setPosition(sf::Vector2f(px, py)); window.draw(body);
 
                     if (isPlayer) 
-                    { // Render Pacman Eyes/Mouth
-                        sf::CircleShape eyeBody(4.0f); eyeBody.setFillColor(sf::Color::White);
-                        eyeBody.setPosition(sf::Vector2f(px + 10, py + 3)); window.draw(eyeBody);
+                    { // Dynamic Pacman Facing Logic
+                        sf::CircleShape eyeBody(3.5f); eyeBody.setFillColor(sf::Color::White);
                         sf::CircleShape pupil(1.5f); pupil.setFillColor(sf::Color::Black);
-                        pupil.setPosition(sf::Vector2f(px + 13, py + 5)); window.draw(pupil);
                         sf::ConvexShape mouth; mouth.setPointCount(3);
                         mouth.setPoint(0, sf::Vector2f(px + 12, py + 12));
-                        mouth.setPoint(1, sf::Vector2f(px + 24, py + 4));
-                        mouth.setPoint(2, sf::Vector2f(px + 24, py + 20));
-                        mouth.setFillColor(sf::Color::Black); window.draw(mouth);
+                        mouth.setFillColor(sf::Color::Black);
+
+                        if (pDc == 1) { // Right
+                            eyeBody.setPosition(sf::Vector2f(px + 10, py + 3)); pupil.setPosition(sf::Vector2f(px + 13, py + 5));
+                            mouth.setPoint(1, sf::Vector2f(px + 24, py + 4)); mouth.setPoint(2, sf::Vector2f(px + 24, py + 20));
+                        } else if (pDc == -1) { // Left
+                            eyeBody.setPosition(sf::Vector2f(px + 6, py + 3)); pupil.setPosition(sf::Vector2f(px + 7, py + 5));
+                            mouth.setPoint(1, sf::Vector2f(px + 0, py + 4)); mouth.setPoint(2, sf::Vector2f(px + 0, py + 20));
+                        } else if (pDr == -1) { // Up
+                            eyeBody.setPosition(sf::Vector2f(px + 14, py + 10)); pupil.setPosition(sf::Vector2f(px + 16, py + 12));
+                            mouth.setPoint(1, sf::Vector2f(px + 4, py + 0)); mouth.setPoint(2, sf::Vector2f(px + 20, py + 0));
+                        } else if (pDr == 1) { // Down
+                            eyeBody.setPosition(sf::Vector2f(px + 4, py + 10)); pupil.setPosition(sf::Vector2f(px + 6, py + 12));
+                            mouth.setPoint(1, sf::Vector2f(px + 4, py + 24)); mouth.setPoint(2, sf::Vector2f(px + 20, py + 24));
+                        }
+                        window.draw(eyeBody); window.draw(pupil); window.draw(mouth);
                     } 
                     else 
                     { // Render Ghost Eyes
